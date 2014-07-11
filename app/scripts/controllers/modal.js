@@ -52,6 +52,27 @@ angular.module('wearscriptPlaygroundApp')
         case 'connected':
           modalTemplate = "views/modals/connectedmodal.html"
           break;
+        case 'send-to-device':
+          var filesForGlass = {};
+            var gist = Gist.activeGist;
+            // BUG: Sends old data
+            angular.forEach(gist.files, function(file, fileName){
+              filesForGlass[fileName] = file.content
+            })
+          Socket.ws.publish(
+            'glass',
+            'script',
+            filesForGlass
+          );
+          Socket.ws.publish(
+            'android',
+            'script',
+            filesForGlass
+          );
+          service.status = "Sent project to Glass"
+          $rootScope.$apply()
+          
+          break;
         default:
           modalTemplate = 'views/modals/help.html';
           break;
